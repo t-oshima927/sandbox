@@ -1,140 +1,772 @@
 
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    * {
-        margin: 0;
-        padding: 0;
-      }
-      .news-list {
-        width: 100%;
-        max-width: 960px;
-        margin: 0 auto;
-      }
-      .news-item {
-        display: flex;
-        align-items: center;
-        padding: .5rem;
-        border-bottom: 1px solid #ddd;
-      }
-      .news-link{
-        color: #333;
-        text-decoration: none;
-      }
-      .news-link p{
-        color: #999;
-        font-size: .9rem;
-      }
-      .news-image {
-        flex: 0 0 auto;
-        margin-right: 1rem;
-      }
-      .news-image img {
-        width: 100px;
-        height: 100px;
-      }
-      .news-content {
-        flex: 1 1 auto;
-      }
-      .news-content h2 {
-        margin-bottom: 10px;
-        font-size: 16px;
-      }
-      .news-content p {
-        margin-bottom: 0;
-      }
-    </style>
-</head>
-<body>
-  <div id="article-list"></div>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script>
-    $(document).ready(function() {
-      var rssUrl = "./news_top.rss"; // RSSのURLを指定する
-      var numArticles = 500; // 表示する記事の数を指定する
-      
-      // RSSを読み込む
-      $.ajax({
-        url: rssUrl,
-        dataType: "xml",
-        success: function(data) {
-          var articles = [];
-          $(data).find("item").each(function(i, item) {
-            if (i < numArticles) {
-              var $item = $(item);
-              var description = $item.find("description").text();
-              var regex = /<img\s+src="([^"]+)"/;
-              var match = description.match(regex);
-              var thumbnail = "https://www.at-s.com/ats-tool/ats-plus/thumb/crop/1/width/200/height/200/yappli/1/file/ats-static/img/ats-plus/news/noimage.jpg";
-              if (match) {
-                  thumbnail = match[1];
-              } 
-              regex = /(\d{4}\.\d{2}\.\d{2}\s+\d{2}:\d{2})/;
-              match = description.match(regex);
-              var pubDate = "";
-              if (match) {
-                  pubDate = match[1];
-              }
-              var article = {
-                title: $item.find("title").text(),
-                link: "https://www.at-s.com",  //$item.find("link").text(),
-                pubDate: pubDate,
-                description:pubDate,
-                thumbnail: thumbnail
-              };
-              articles.push(article);
-            }
-          });
-          
-          // 記事一覧を生成する
-          var $articleList = $('<ul>');
-          
-          $.each(articles, function(i, article) {
+<html lang="ja" dir="ltr">
+<head prefix="og: https://ogp.me/ns# fb: https://ogp.me/ns/fb# website: https://ogp.me/ns/website#">
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<link rel="canonical" href="https://www.at-s.com/index.html" />
+<link rel="alternate" media="only screen and (max-width: 640px)" href="http://www.at-s.com/sp/index.html" />
+<title>＠S［アットエス］ | 静岡新聞SBSオフィシャルサイト</title>
+<meta name="keywords" content="アットエス,おでかけ,静岡新聞,ニュース,スポーツ,グルメ,SBSテレビ,SBSラジオ" />
+<meta name="description" content="静岡新聞社・静岡放送が運営する＠Ｓ［アットエス］は、静岡県のあらゆる情報を網羅した情報サイトです。県内のイベント、グルメなどの暮らしに役立つ情報から、テレビ・ラジオの番組情報、県内企業の求人など、ビジネス情報まで紹介しています。" />
+<link rel="stylesheet" type="text/css" href="/ats-static/css/common/cmn_layout.css" media="all">
+<link rel="stylesheet" type="text/css" href="/ats-static/css/common/cmn_style.css" media="all">
+<link rel="stylesheet" type="text/css" href="/ats-static-rwd/css/common/header_ats_pc.css">
+<link rel="stylesheet" type="text/css" href="/ats-static-rwd/css/common/breadcrumb_pc.css">
+<link rel="stylesheet" type="text/css" href="/ats-static-rwd/css/common/footer_pc.css">
+<link rel="stylesheet" type="text/css" href="/ats-static/css/common/system.css" media="all">
+<script type="text/javascript" src="/ats-static/js/common/jquery.js"></script>
+<script type="text/javascript" src="/ats-static/js/common/jquery.cookie.js"></script>
+<script type="text/javascript" src="/ats-static/js/common/common.js"></script>
+<script type="text/javascript" src="/ats-static/js/common/pagetop.js"></script>
+<script type="text/javascript" src="/ats-static/js/common/paceholders.js"></script>
+<script type="text/javascript" src="/ats-static/js/common/ats.js"></script>
+<script type="text/javascript">
+$(function(){
+	ats.setArea($(document));
+});
+</script>
+<!--[if lt IE 9]><script src="/ats-static/js/common/html5_ie.js"></script><![endif]-->
+<!-- Global Site Tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-20286630-1"></script>
+<script>
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	
+	gtag('config', 'UA-20286630-1');
+</script>
 
-            var item = "";
-            item += '<div class="news-item">';
-            item += '<a href="' + article.link + '" class="news-link" target="_blank">';
-            item += '<div class="news-image">';
-            item += '<img src="' + article.thumbnail + '" loading="lazy">';
-            item += '</div>';
-            item += '<div class="news-content">';
-            item += '<h2>' + article.title + '</h2>';
-            item += '<p>' + article.description + '</p>';
-            item += '</a>'
-            item += '</div>';
+<meta property="og:title" content= "＠S［アットエス］ | 静岡新聞SBSオフィシャルサイト" />
+<meta property="og:type" content="website" />
+<meta property="og:description" content="静岡新聞社・静岡放送が運営する＠Ｓ［アットエス］は、静岡県のあらゆる情報を網羅した情報サイトです。県内のイベント、グルメなどの暮らしに役立つ情報から、テレビ・ラジオの番組情報、県内企業の求人など、ビジネス情報まで紹介しています。" />
+<meta property="og:url" content="https://www.at-s.com/index.html" />
+<meta property="og:image" content="https://www.at-s.com/ats-static/img/common/img_og_ats.png" />
+<meta property="og:site_name" content="＠S［アットエス］ | 静岡新聞SBSオフィシャルサイト" />
+<meta property="og:locale" content="ja_JP" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="＠S［アットエス］ | 静岡新聞SBSオフィシャルサイト" />
+<meta name="twitter:url" content="https://www.at-s.com/index.html" />
+<meta name="twitter:image" content="https://www.at-s.com/ats-static/img/common/img_og_ats.png" />
+<meta name="twitter:description" content="静岡新聞社・静岡放送が運営する＠Ｓ［アットエス］は、静岡県のあらゆる情報を網羅した情報サイトです。県内のイベント、グルメなどの暮らしに役立つ情報から、テレビ・ラジオの番組情報、県内企業の求人など、ビジネス情報まで紹介しています。" />
+<link rel="stylesheet" type="text/css" href="/ats-static/css/common/eventinfo.css" media="all">
+<link rel="stylesheet" type="text/css" href="/ats-static/css/top/top.css" media="all">
+<script type="text/javascript" src="/ats-static/js/at-s/top.js"></script>
+<script type="text/javascript" src="/ats-static/js/at-s/recommend.js"></script>
+<script type="application/javascript" src="//anymind360.com/js/1668/ats.js"></script>
 
-            $articleList.append($(item));
-                       
-          });
-          
-          // 記事一覧をページに表示する
-          $('#article-list').append($articleList);
-          
-          /*
-          $('.news-link').click(function(e) {
-            e.preventDefault();
-            var link = "https://www.at-s.com";   //$(this).attr("href");
-            history.pushState(null, null, link);
-          });
-          */
-        
-        },
-        error: function() {
-          // RSSの読み込みに失敗した場合にエラーメッセージを表示する
-          var $errorMessage = $('<p>').text('Failed to load RSS feed');
-          $('#article-list').append($errorMessage);
+<script async='async' src='https://www.googletagservices.com/tag/js/gpt.js'></script>
+<script>
+  var googletag = googletag || {};
+  googletag.cmd = googletag.cmd || [];
+</script>
+
+<script type="text/javascript">var path_value = location.pathname.substr(0, 40);
+var parameter_value = location.search.substr(0, 40);
+var ref_value = "null";
+if (document.referrer) {
+var ref_array = [];
+ref_array = document.referrer.split("/");
+ref_value = ref_array[2];
+}
+
+googletag.cmd.push(function () {
+googletag.pubads().setTargeting('URL', path_value).setTargeting('Para', parameter_value).setTargeting('Ref', ref_value);
+googletag.pubads().collapseEmptyDivs();
+});</script>
+
+<script>
+  googletag.cmd.push(function() {
+    googletag.defineSlot('/83555300,8661778/shizuoka/at_s/pc_rejya_header', [728, 90], 'pc_rejya_header').addService(googletag.pubads());
+    googletag.defineSlot('/83555300,8661778/shizuoka/at_s/pc_rejya_right_1st',[[1, 1],[300, 250],[300, 600]], 'pc_rejya_right_1st').addService(googletag.pubads());
+    googletag.defineSlot('/83555300,8661778/shizuoka/at_s/pc_rejya_right_2nd', [[1, 1],[300, 250],[300, 600]], 'pc_rejya_right_2nd').addService(googletag.pubads());
+    googletag.defineSlot('/83555300,8661778/shizuoka/at_s/pc_rejya_right_3rd', [[1, 1],[300, 250],[300, 600]], 'pc_rejya_right_3rd').addService(googletag.pubads());
+    googletag.defineSlot('/83555300,8661778/shizuoka/at_s/pc_jisya_300x50', [300, 50], 'pc_jisya_300x50').addService(googletag.pubads());
+    googletag.defineSlot('/83555300,8661778/shizuoka/at_s/pc_jisya_300x50_2nd', [300, 50], 'pc_jisya_300x50_2nd').addService(googletag.pubads());
+    googletag.defineSlot('/83555300,8661778/shizuoka/at_s/pc_jisya_300x50_3rd', [300, 50], 'pc_jisya_300x50_3rd').addService(googletag.pubads());
+    googletag.defineSlot('/83555300,8661778/shizuoka/at_s/pc_jisya_300x204_1st', [[300, 204],'fluid'], 'pc_jisya_300x204_1st').addService(googletag.pubads());
+    googletag.defineSlot('/83555300,8661778/shizuoka/at_s/pc_jisya_300x204_2nd', [[300, 204],'fluid'], 'pc_jisya_300x204_2nd').addService(googletag.pubads());
+    googletag.defineSlot('/83555300,8661778/shizuoka/at_s/pc_jisya_300x204_3rd', [[300, 204],'fluid'], 'pc_jisya_300x204_3rd').addService(googletag.pubads());
+    googletag.defineSlot('/83555300,8661778/shizuoka/at_s/pc_jisya_300x204_4th', [[300, 204],'fluid'], 'pc_jisya_300x204_4th').addService(googletag.pubads());
+    googletag.defineSlot('/83555300,8661778/shizuoka/at_s/pc_jisya_300x204_5th', [[300, 204],'fluid'], 'pc_jisya_300x204_5th').addService(googletag.pubads());
+    googletag.defineSlot('/83555300,8661778/shizuoka/at_s/pc_jisya_47club', [[300, 300],[300, 250],'fluid'], 'pc_jisya_47club').addService(googletag.pubads());
+    googletag.defineSlot('/83555300,8661778/shizuoka/at_s/pc_rejya_native_1st', [[200, 167], 'fluid'], 'pc_rejya_native_1st').addService(googletag.pubads());
+    googletag.defineSlot('/83555300,8661778/shizuoka/at_s/pc_rejya_native_2nd', [[200, 167], 'fluid'], 'pc_rejya_native_2nd').addService(googletag.pubads());
+    googletag.defineSlot('/83555300,8661778/shizuoka/at_s/pc_rejya_native_3rd', [[200, 167], 'fluid'], 'pc_rejya_native_3rd').addService(googletag.pubads());
+    googletag.pubads().enableSingleRequest();
+    googletag.pubads().collapseEmptyDivs();
+    googletag.enableServices();
+  });
+</script><link rel="stylesheet" type="text/css" href="/ats-static/css/dogas/live24h.css" media="all">
+<script type='text/javascript'>
+     (function () {
+        /** CONFIGURATION START **/
+        var _sf_async_config = window._sf_async_config = (window._sf_async_config || {});
+
+        _sf_async_config.uid = 66053;
+        _sf_async_config.domain = 'at-s.com';
+        _sf_async_config.useCanonical = true;
+        _sf_async_config.useCanonicalDomain = true;
+        _sf_async_config.flickerControl= false;
+        _sf_async_config.title = document.title;
+        _sf_async_config.sections = "トップ";
+        _sf_async_config.authors = "";
+        /** CONFIGURATION END **/
+        function loadChartbeat() {
+            var e = document.createElement('script');
+            var n = document.getElementsByTagName('script')[0];
+            e.type = 'text/javascript';
+            e.async = true;
+            e.src = '//static.chartbeat.com/js/chartbeat.js';
+            n.parentNode.insertBefore(e, n);
         }
-        
-        
-      });
-      
+        loadChartbeat();
+     })();
+</script>
+<script async src="//static.chartbeat.com/js/chartbeat_mab.js"></script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3914108666136762" crossorigin="anonymous"></script>
+</head>
+<body id="g01" class="top">
+<div id="wrapper">
+	<script type="text/javascript">ats.smphButton("/sp");</script><header id="header" class="headerPC">
+	<div id="headerIn">
+	<div id="headerLogo"><a href="/"><img src="/ats-static/img/common/logo01.gif" width="184" height="110" alt="アットエス | 静岡新聞SBS"></a></div>
+	<div class="headerTool01">
+		<div id="headerSearch">
+			<form name="header-search" id="header-search" method="get" action="/search.html">
+				<input type="text" name="q" id="inputSearch01" value="" placeholder="ニュース、イベント、お店などを検索" />
+				<input type="image" src="/ats-static/img/common/btn_search01.gif" id="searchBtn01" alt="検索">
+			</form>
+		<!-- /headerSearch --></div>
+		<span id="status01" class="member-logout member-logout-pc"><a href="https://www.at-s.com/apps/account?redirect_url=https%3A%2F%2Fwww.at-s.com%2F" class="btnType07">＠Ｓパスポートログイン</a></span>
+		<span id="status02" class="member-login member-login-pc"><b class="member-name"></b> 様　<a href="https://www.at-s.com/apps/account/menu?redirect_url=https%3A%2F%2Fwww.at-s.com%2F" class="btnType06">マイページ</a>　<a href="https://www.at-s.com/apps/account/auth/logout?redirect_url=https%3A%2F%2Fwww.at-s.com%2F" class="btnType07">ログアウト</a></span>
+					<script type="text/javascript">
+				if(ats.getCookie('ATS_MEMBER_LOGIN') == '1'){
+					$.ajax({
+						type: 'GET',
+						url: 'https://www.at-s.com/apps/account/api/member/status/auth',
+						dataType: 'jsonp',
+						cache: false,
+						jsonpCallback: 'ats.memberStatusCallback'
+					});
+					setTimeout(function(){
+						ats.memberStatusCallback();
+					}, 3000);
+				}else{
+					ats.memberStatusCallback();
+				}
+			</script>	<!-- /headerTool01 --></div>
+			<!-- /83555300/shizuoka/at_s/pc_rejya_header -->
+<div id='pc_rejya_header' class='headerBanner01'>
+<script>
+googletag.cmd.push(function() { googletag.display('pc_rejya_header'); });
+</script>
+</div>
+	<!-- /headerIn --></div>
+<nav id="navi">
+	<div class="naviWrap01">
+		<ul class="gNavi">
+			<li id="gNav01"><span><a href="/index.html">ホーム</a></span></li>
+            <li id="gNav14"><span><a href="/life/">ライフ</a></span></li>
+			<li id="gNav05"><span><a href="/gourmet/">グルメ</a></span>
+				<ul class="subGnavi01">
+					<li><span><a href="/gourmet/search_new_open/">新店一覧</a></span></li>
+					<li><span><a href="/gourmet/search/">新着・更新店情報</a></span></li>
+					<li><span><a href="/present/">プレゼント</a></span></li>
+					<li><span><a href="/gourmet/latest/">新着コラム一覧</a></span></li>
+				</ul>
+			</li>
+			<li id="gNav04"><span><a href="/event/">イベント</a></span>
+				<ul class="subGnavi01">
+					<li><span><a href="/event/search/?sort_by=upd">新着イベント一覧</a></span></li>
+					<li><span><a href="/present/">プレゼント</a></span></li>
+				</ul>
+			</li>
+			<li id="gNav12"><span><a href="/facilities/">観光</a></span></li>
+			<li id="gNav15"><span><a href="/coupon/">クーポン</a></span></li>
+		</ul>
+		<ul class="sNavi">
+			<li id="sNav01"><span><a href="https://newsdig.tbs.co.jp/list/sbs" target="_blank">SBS NEWS</a></span></li>
+			<li id="sNav02"><span><a href="/sbstv/">SBS TV</a></span></li>
+			<li id="sNav03"><span><a href="/sbsradio/">SBS RADIO</a></span></li>
+			<li id="sNav04"><span><a href="/news/" target="_blank">あなたの静岡新聞</a></span></li>
+		</ul>
+	<!-- /naviWrap01 --></div>
+	<!-- /navi --></nav>
+</header>
+	<article id="contents">
+		<div class="contents_info01"><a href="https://shizushinsbs.co.jp/posts/Rv-y8C4H" target="_blank">多くのお問い合わせをいただいております「静岡新聞DIGITAL購読キーのご案内」の封書についてのお知らせ</a></div><div class="contents_info01"><a href="https://shizushinsbs.co.jp/compare" onclick="gtag('event', 'click',{'event_category':'ats_top_to_compare_click', 'event_label':'https://www.at-s.com/','event_action':'https://shizushinsbs.co.jp/compare'});" target="_blank">４月１日スタート「静岡新聞DIGITAL」</a></div><div class="contents_info01"><a href="https://shizushinsbs.co.jp/posts/LI1LzxyF" target="_blank">静岡新聞 夕刊廃止及び朝刊刷新のお知らせ</a></div>		<style>
+  #saigaiTopWidget{
+  	margin:0 auto;
+  }
+  #saigaiTopWidget iframe{
+  	margin: 0 0 8px;
+  }
+  #saigaiTopWidget iframe[style*="height:0"]{
+  	margin:0;
+  }
+  @media only print, screen and (max-width: 640px){
+  	#saigaiTopWidget{
+  		margin: 10px 0 0;
+  	}
+  	#saigaiTopWidget iframe{
+  		margin: 0;
+  	}
+  	#saigaiTopWidget iframe[style*="height:0"]{
+  		margin:0;
+  	}
+  }
+</style>
+<div id="saigaiTopWidget">
+	<script type="text/javascript" src="https://bousai-parts.kyodo-d.jp/contents/static/js/kyd_ss_widget_caution.js?file=0501" data-location="/saigai/index.html?kind=warning#nav"></script>
+	<script type="text/javascript" src="https://bousai-parts.kyodo-d.jp/contents/static/js/kyd_la_widget_evc.js?file=22" data-location="/saigai/index.html?kind=evacuation#nav"></script>
+	<script type="text/javascript" src="https://bousai-parts.kyodo-d.jp/contents/static/js/kyd_ss_flash.js?file=22b" data-location="/saigai/index.html?kind=earthquakeFlash#nav"></script>
+</div>
 
-      
-    });
+
+		<div id="main">
+			<section class="sectionNews">
+				<div class="newsBox01">
+					<ul class="newsNavi01">
+						<li class="current"><a href="#news_newarrival">新着ニュース</a></li>
+						<li class=""><a href="#news_anashin">あなたの静岡新聞</a></li>
+						<li class=""><a href="#news_sbsnews">SBS NEWS</a></li>
+					</ul>
+					<div class="newsArea01" id="news_newarrival"><ul class="newsList04"><li><div class="newsList__title"><a href="https://newsdig.tbs.co.jp/articles/sbs/427814" target="_blank" rel="noopener noreferrer">【速報 新型コロナ】静岡県内 感染者 149人　前週比+24人で3日連続増加　死者の報告なし（4月11日分）</a></div><div class="newsList__label type02">SBS NEWS</div></li><li><div class="newsList__title"><a href="https://newsdig.tbs.co.jp/articles/sbs/427440" target="_blank" rel="noopener noreferrer">【速報 新型コロナ】浜松市感染者数 13人　前週比-6人　死者の報告なし　(4月11日分）</a></div><div class="newsList__label type02">SBS NEWS</div></li><li><div class="newsList__title"><a href="https://newsdig.tbs.co.jp/articles/sbs/427374" target="_blank" rel="noopener noreferrer">田んぼの上を泳ぐのは…34匹のこいのぼり　子どもの元気な成長願う＝静岡・下田市</a></div><div class="newsList__label type02">SBS NEWS</div></li><li><div class="newsList__title"><a href="/news/article/shizuoka/1222897.html" target="_blank" rel="noopener noreferrer">リアル野球盤に大歓声　少人数でも試合、アウトゾーンにガックリ　浜松湖北高佐久間分校で大会</a></div><div class="newsList__label type01">あなたの<br>静岡新聞</div></li><li><div class="newsList__title"><a href="/news/article/shizuoka/1222896.html" target="_blank" rel="noopener noreferrer">“しずまえ”限定メニューいかが　静岡市内３０店舗で「バル」</a></div><div class="newsList__label type01">あなたの<br>静岡新聞</div></li></ul></div>					<div class="newsArea01" id="news_anashin" style="display:none;">
+	<ul class="newsList04">
+
+		<li><div class="newsList__title"><a href="/news/article/shizuoka/1222897.html" target="_blank" rel="noopener noreferrer">リアル野球盤に大歓声　少人数でも試合、アウトゾーンにガックリ　浜松湖北高佐久間分校で大会</a></div>					<div class="newsList__label type01">あなたの<br>静岡新聞</div>
+</li>
+		<li><div class="newsList__title"><a href="/news/article/shizuoka/1222896.html" target="_blank" rel="noopener noreferrer">&ldquo;しずまえ&rdquo;限定メニューいかが　静岡市内３０店舗で「バル」</a></div>					<div class="newsList__label type01">あなたの<br>静岡新聞</div>
+</li>
+		<li><div class="newsList__title"><a href="/news/article/shizuoka/1222895.html" target="_blank" rel="noopener noreferrer">認知症高齢者の便秘改善　排便習慣確立、促進姿勢で効果　聖隷クリストファー大准教授　世界初の実証試験</a></div>					<div class="newsList__label type01">あなたの<br>静岡新聞</div>
+</li>
+		<li><div class="newsList__title"><a href="/news/article/shizuoka/1222894.html" target="_blank" rel="noopener noreferrer">下田市丸ごと「図書館」　カフェやワーケーション施設　一角に蔵書、読書推進</a></div>					<div class="newsList__label type01">あなたの<br>静岡新聞</div>
+</li>
+		<li><div class="newsList__title"><a href="/news/article/shizuoka/1222893.html" target="_blank" rel="noopener noreferrer">５月１３、１４日「ＦＵＪＩ＆ＳＵＮ&rsquo;２３」　音楽もキャンプも全部楽しむ　ＤＪ・ＴＯＰＤＯＣＡさんインタビュー</a></div>					<div class="newsList__label type01">あなたの<br>静岡新聞</div>
+</li>
+
+				<div class="more"><a href="/news/shizuoka/" target="_blank" rel="noopener noreferrer"><span>あなたの静岡新聞へ</span></a></div>
+	</ul>
+<!-- /newsArea01 --></div>
+					<div class="newsArea01" id="news_sbsnews" style="display:none;"><ul class="newsList04"><li><div class="newsList__title"><a href="https://newsdig.tbs.co.jp/articles/sbs/427814" target="_blank" rel="noopener noreferrer">【速報 新型コロナ】静岡県内 感染者 149人　前週比+24人で3日連続増加　死者の報告なし（4月11日分）</a></div><div class="newsList__label type02">SBS NEWS</div></li><li><div class="newsList__title"><a href="https://newsdig.tbs.co.jp/articles/sbs/427440" target="_blank" rel="noopener noreferrer">【速報 新型コロナ】浜松市感染者数 13人　前週比-6人　死者の報告なし　(4月11日分）</a></div><div class="newsList__label type02">SBS NEWS</div></li><li><div class="newsList__title"><a href="https://newsdig.tbs.co.jp/articles/sbs/427374" target="_blank" rel="noopener noreferrer">田んぼの上を泳ぐのは…34匹のこいのぼり　子どもの元気な成長願う＝静岡・下田市</a></div><div class="newsList__label type02">SBS NEWS</div></li><li><div class="newsList__title"><a href="https://newsdig.tbs.co.jp/articles/sbs/427309" target="_blank" rel="noopener noreferrer">検察の立証方針保留に不満も「先は見えているので安心」と袴田さんの姉・ひで子さん　</a></div><div class="newsList__label type02">SBS NEWS</div></li><li><div class="newsList__title"><a href="https://newsdig.tbs.co.jp/articles/sbs/427307" target="_blank" rel="noopener noreferrer">「おいしいお茶にできそう」出来栄え競う全国大会にむけ新芽を丁寧に手摘み＝浜松市</a></div><div class="newsList__label type02">SBS NEWS</div></li><!-- /newsArea01 --></ul><div class="more"><a href="https://newsdig.tbs.co.jp/list/sbs" target="_blank" rel="noopener noreferrer"><span>SBS NEWSへ</span></a></div></div>
+					<ul class="newsList05">
+																														<li>  <a href="/life/article/ats/1219133.html"><div class="labelBox type02">pickup!</div>    <figure class="imgBox01">      <img src="/images/n105/1049958/230415_main.jpg" pinger-seen="true">    </figure>    <dl class="newsList05__inner">      <dt>4月15、16日に開催！静岡県内の週末おすすめイベント／花真っ盛り！藤まつり・春の園芸市・富士山とれんげ畑、菜の花</dt>      <dd>ライフ</dd>    </dl>  </a></li><li>  <a href="/event/article/festival/118818.html">    <figure class="imgBox01">      <img src="/event/images/n12/118818/118818okunijinjajunidanbugaku2017_02.jpg" pinger-seen="true">    </figure>    <dl class="newsList05__inner">      <dt>遠江国一宮 小國神社 古式十二段舞楽奉奏・神子舞奉奏</dt>      <dd>イベント</dd>    </dl>  </a></li><li>  <a href="/life/article/ats/1217258.html">    <figure class="imgBox01">      <img src="/life/images/n122/1217258/wa_top2.jpg" pinger-seen="true">    </figure>    <dl class="newsList05__inner">      <dt>＜2023年最新＞静岡県の和スイーツランキング！アクセスTOP10</dt>      <dd>ライフ</dd>    </dl>  </a></li><li>  <a href="/gourmet/featured/heritage/index.html"><div class="labelBox type02">pickup!</div>    <figure class="imgBox01">      <img src="/images/n105/1049958/bnr_heritage350_280.png" pinger-seen="true">    </figure>    <dl class="newsList05__inner">      <dt>クチコミ募集！「静岡グルメ遺産」あなたが未来に残したい推しグルメを教えてください！</dt>      <dd>グルメ</dd>    </dl>  </a></li><li>  <a href="/info/koudoku/index.html">    <figure class="imgBox01">      <img src="/images/n105/1049958/otameshi_1000_666.png" pinger-seen="true">    </figure>    <dl class="newsList05__inner">      <dt>静岡新聞　無料１週間「お試し読み」キャンペーン実施中！</dt>      <dd></dd>    </dl>  </a></li><li>  <a href="/event/article/flower/120318.html">    <figure class="imgBox01">      <img src="/event/images/n13/120318/20200520inogshira.jpg" pinger-seen="true">    </figure>    <dl class="newsList05__inner">      <dt>猪之頭のミツバツツジ（県指定天然記念物）</dt>      <dd>イベント</dd>    </dl>  </a></li><li>  <a href="https://www.at-s.com/blogs/sdgs/">    <figure class="imgBox01">      <img src="/images/n105/1049958/20221014_bnr_sdgs.png" pinger-seen="true">    </figure>    <dl class="newsList05__inner">      <dt>静岡新聞SBSの最新コンテンツはこちらから。</dt>      <dd>静岡新聞SBS</dd>    </dl>  </a></li><li>  <a href="/life/article/ats/1220653.html">    <figure class="imgBox01">      <img src="/life/images/n123/1220653/huttosaru.jpg" pinger-seen="true">    </figure>    <dl class="newsList05__inner">      <dt>女子フットサルのデリッツィア磐田、アマチュア日本一に！</dt>      <dd>ライフ</dd>    </dl>  </a></li><li>  <a href="/life/article/ats/1219301.html">    <figure class="imgBox01">      <img src="/life/images/n122/1219301/01.jpg" pinger-seen="true">    </figure>    <dl class="newsList05__inner">      <dt>文具ライターおすすめ！ 2023春の新作ペン・トレンド文具</dt>      <dd>ライフ</dd>    </dl>  </a></li><li>  <a href="/event/article/flower/480777.html">    <figure class="imgBox01">      <img src="/event/images/n49/480777/renge_2023_1.jpg" pinger-seen="true">    </figure>    <dl class="newsList05__inner">      <dt>富士市須津地区・吉永地区のれんげ</dt>      <dd>イベント</dd>    </dl>  </a></li><li>  <a href="/gourmet/article/washoku/sushi/123749.html">    <figure class="imgBox01">      <img src="/gourmet/images/n13/123749/sushitatu_01.jpg" pinger-seen="true">    </figure>    <dl class="newsList05__inner">      <dt>寿し辰</dt>      <dd>グルメ</dd>    </dl>  </a></li><li>  <a href="/event/article/flower/112532.html">    <figure class="imgBox01">      <img src="/event/images/n12/112532/20210208flowerpark4.jpg" pinger-seen="true">    </figure>    <dl class="newsList05__inner">      <dt>はままつフラワーパーク さくらそう展</dt>      <dd>イベント</dd>    </dl>  </a></li><li class="newsList05__bnr"><!-- /83555300/shizuoka/at_s/pc_rejya_native_1st -->
+<div id='pc_rejya_native_1st'>
+	<script>
+		googletag.cmd.push(function() { googletag.display('pc_rejya_native_1st'); });
+	</script>
+</div></li><li>  <a href="/event/article/art/1208582.html">    <figure class="imgBox01">      <img src="/event/images/n121/1208582/202303buffet2.jpeg" pinger-seen="true">    </figure>    <dl class="newsList05__inner">      <dt>ベルナール・ビュフェ美術館「こわくて、たのしいスイスの絵本展 ～クライドルフ、フィッシャー、ホフマンの世界～」</dt>      <dd>イベント</dd>    </dl>  </a></li><li>  <a href="/event/article/flower/120249.html">    <figure class="imgBox01">      <img src="/event/images/n13/120249/yuyanonagafuji01.jpg" pinger-seen="true">    </figure>    <dl class="newsList05__inner">      <dt>磐田市池田・熊野の長藤</dt>      <dd>イベント</dd>    </dl>  </a></li><li>  <a href="/gourmet/article/takeout/etc/125695.html">    <figure class="imgBox01">      <img src="/gourmet/images/n13/125695/125695plzasuzuki3.jpg" pinger-seen="true">    </figure>    <dl class="newsList05__inner">      <dt>グルメプラザ　すずき</dt>      <dd>グルメ</dd>    </dl>  </a></li><li>  <a href="/event/article/experience/120781.html">    <figure class="imgBox01">      <img src="/event/images/n13/120781/kuraya-narusawa03.jpg" pinger-seen="true">    </figure>    <dl class="newsList05__inner">      <dt>春のチャレンジ茶摘み＜蔵屋鳴沢＞</dt>      <dd>イベント</dd>    </dl>  </a></li><li>  <a href="/life/article/ats/1222358.html">    <figure class="imgBox01">      <img src="/life/images/n123/1222358/ippo0407_1.jpg" pinger-seen="true">    </figure>    <dl class="newsList05__inner">      <dt>飲みやすさとともに旬のトレンドも！ この春おすすめの「飲むヨーグルト」</dt>      <dd>ライフ</dd>    </dl>  </a></li><li>  <a href="/event/article/kids/1222347.html">    <figure class="imgBox01">      <img src="/event/images/n123/1222347/_3b900478ac4bf03f40330ca957dbd73c.jpg" pinger-seen="true">    </figure>    <dl class="newsList05__inner">      <dt>GO! GO! アニマルパーク!　SBSマイホームセンター　富士展示場</dt>      <dd>イベント</dd>    </dl>  </a></li><li class="newsList05__bnr"><!-- /83555300/shizuoka/at_s/pc_rejya_native_2nd -->
+<div id='pc_rejya_native_2nd'>
+	<script>
+		googletag.cmd.push(function() { googletag.display('pc_rejya_native_2nd'); });
+	</script>
+</div></li><li>  <a href="/event/article/flower/888766.html">    <figure class="imgBox01">      <img src="/event/images/n89/888766/20210417_Izu.Panoramapark_Tutuji1.jpg" pinger-seen="true">    </figure>    <dl class="newsList05__inner">      <dt>伊豆パノラマパークのツツジ</dt>      <dd>イベント</dd>    </dl>  </a></li><li>  <a href="/life/article/ats/1218651.html">    <figure class="imgBox01">      <img src="/life/images/n122/1218651/zombi3.jpg" pinger-seen="true">    </figure>    <dl class="newsList05__inner">      <dt>異文化理解の助けに？専門家に聞く、ゾンビ映画の楽しみ方</dt>      <dd>ライフ</dd>    </dl>  </a></li><li>  <a href="/life/article/ats/1222586.html">    <figure class="imgBox01">      <img src="/life/images/n123/1222586/0411ran.jpg" pinger-seen="true">    </figure>    <dl class="newsList05__inner">      <dt>「年中さんの秋から始まって…」早まるランドセル選び　「家族のイベント」すでにピークへ</dt>      <dd>ライフ</dd>    </dl>  </a></li><li>  <a href="/gourmet/article/asian/ramen/1184609.html">    <figure class="imgBox01">      <img src="/gourmet/images/n119/1184609/yaizukonsinya_01.jpg" pinger-seen="true">    </figure>    <dl class="newsList05__inner">      <dt>横浜家系ラーメン 焼津魂心家（こんしんや）</dt>      <dd>グルメ</dd>    </dl>  </a></li><li>  <a href="/life/article/ats/1217173.html">    <figure class="imgBox01">      <img src="/life/images/n122/1217173/230408_main.jpg" pinger-seen="true">    </figure>    <dl class="newsList05__inner">      <dt>4月8、9日に開催！静岡県内の週末おすすめイベント／5年ぶりに開催！金谷茶まつり・静岡手創り市・国立遺伝学研究所一般公開</dt>      <dd>ライフ</dd>    </dl>  </a></li><li>  <a href="/gourmet/article/washoku/all/125989.html">    <figure class="imgBox01">      <img src="/gourmet/images/n13/125989/akazawa_main.jpg" pinger-seen="true">    </figure>    <dl class="newsList05__inner">      <dt>伊豆高原体験の里 食事処 あかざわ</dt>      <dd>グルメ</dd>    </dl>  </a></li><li class="newsList05__bnr"><!-- /83555300/shizuoka/at_s/pc_rejya_native_3rd -->
+<div id='pc_rejya_native_3rd'>
+	<script>
+		googletag.cmd.push(function() { googletag.display('pc_rejya_native_3rd'); });
+	</script>
+</div></li><li>  <a href="/gourmet/article/asian/ramen/609752.html">    <figure class="imgBox01">      <img src="/gourmet/images/n61/609752/konshinya_fujieda01.jpg" pinger-seen="true">    </figure>    <dl class="newsList05__inner">      <dt>横浜家系ラーメン 魂心家 藤枝駅前店（こんしんや）</dt>      <dd>グルメ</dd>    </dl>  </a></li><li>  <a href="/gourmet/article/yoshoku/italian/214128.html">    <figure class="imgBox01">      <img src="/gourmet/images/n22/214128/4214128_trattoria202111_01.jpg" pinger-seen="true">    </figure>    <dl class="newsList05__inner">      <dt>トラットリアさんりんしゃ</dt>      <dd>グルメ</dd>    </dl>  </a></li><li>  <a href="/gourmet/article/asian/ramen/125305.html">    <figure class="imgBox01">      <img src="/gourmet/images/n13/125305/1141958249konsinya01.jpg" pinger-seen="true">    </figure>    <dl class="newsList05__inner">      <dt>横浜家系ラーメン 沼津 魂心家（こんしんや）</dt>      <dd>グルメ</dd>    </dl>  </a></li><li>  <a href="/gourmet/article/nomiya/washoku/171094.html">    <figure class="imgBox01">      <img src="/gourmet/images/n18/171094/hinata01.jpg" pinger-seen="true">    </figure>    <dl class="newsList05__inner">      <dt>肉料理と大地の恵み ひなた</dt>      <dd>グルメ</dd>    </dl>  </a></li><li>  <a href="/life/article/ats/1214873.html">    <figure class="imgBox01">      <img src="/life/images/n122/1214873/A4_yoko_OMOTE1200849.jpg" pinger-seen="true">    </figure>    <dl class="newsList05__inner">      <dt>『フランダースの犬』原作はセントバーナード犬ではなかった!? 世界名作劇場には欠かせない“マスコットアニマル”について</dt>      <dd>ライフ</dd>    </dl>  </a></li><li>  <a href="/life/article/ats/1221159.html">    <figure class="imgBox01">      <img src="/life/images/n123/1221159/huzieda47.jpg" pinger-seen="true">    </figure>    <dl class="newsList05__inner">      <dt>藤枝MYFCの中井崇仁選手、ファジアーノ岡山戦でのバースデーゴール誓う</dt>      <dd>ライフ</dd>    </dl>  </a></li>					</ul>
+
+				<!-- /newsBox01 --></div>
+			<!-- /sectionNews --></section>
+
+			<section class="sectionEventInfo">
+			<div class="informationBox">
+	<p class="sub_eventinfo01">静岡新聞SBS主催</p>
+	<h2><img src="/ats-static/img/common/ttl_eventinfo.png" alt="静岡新聞社・静岡放送主催事業情報　イベントインフォメーション"></h2>
+	<a onclick="gtag('event', 'eventinfo_click', {'event_category': 'eventinfo_link','event_label': 'eventinfo_btn'})" href="/event/eventinfo/" target="_blank" class="btnTypeList"><span>詳細はこちら</span></a>
+</div>
+<div class="sliderBox">
+	<div class="stage">
+		<ul class="stage-inner">
+<li class="photo1"><p><img src="/event/images/n122/1215567/HP掲載用_B5POP_味の素(株)「ほんだしⓇ」で朝活キャンペーン.jpg"></p><div class="txt-clamp">味の素㈱＆SBSテレビ共同企画　朝は「ほんだし®」でみそ汁を！「ラブベジ®」キャンペーン</div></li><li class="photo2"><p><img src="/event/images/n122/1212188/202304hamamatsuhookusaiten.jpg"></p><div class="txt-clamp">浜松市美術館　北斎展-師と弟子たち-</div></li><li class="photo3"><p><img src="/event/images/n120/1190070/fjsn23_key_s.jpg"></p><div class="txt-clamp">FUJI&SUN’23</div></li><li class="photo4"><p><img src="/event/images/n122/1219681/itadaki.jpg"></p><div class="txt-clamp">頂 －ITADAKI－ 2023</div></li>		</ul>
+	</div>
+</div>
+			<!-- /sectionEventInfo --></section>
+			<section class="sectionBook"><div class="ttlBasic01 type05"><h2>静岡新聞社の本</h2></div><ul class="infoType05"><li><div class="detailBox04"><dl><dt><p><a href="/book/article/jihi/1144428.html">生き抜け、竹千代</a></p><p class="price">定価1320円（税込価格）</p><p class="issue">2022年11月発行</p></dt><dd><p>織田と今川、二つの勢力の狭間で翻弄される三河の松平家の嫡男・竹千代。幼くして人質となった彼を導いたのは、今川家…</p></dd></dl><div class="imgDetail01"><figure><p class="img02"><a class="opacityOver" href="/book/article/jihi/1144428.html"><img src="/ats-tool/thumb.php?file=%2Fbook%2Fimages%2Fn115%2F1144428%2Ftakechiyo.jpg&width=100&height=100" alt=""></a></p></figure><!-- /imgDetail01 --></div><!-- /detailBox04 --></div></li><li><div class="detailBox04"><dl><dt><p><a href="/book/article/foods/1142105.html">お菓子をつくること</a></p><p class="price">定価1980円（税込価格）</p><p class="issue">2022年10月発行</p></dt><dd><p>静岡県内に2店舗を展開する洋菓子店「キャトルエピス」。店名はフランス語の「四つのスパイス」に由来する。香味一つ…</p></dd></dl><div class="imgDetail01"><figure><p class="img02"><a class="opacityOver" href="/book/article/foods/1142105.html"><img src="/ats-tool/thumb.php?file=%2Fbook%2Fimages%2Fn115%2F1142105%2Fqehyoshi.jpg&width=100&height=100" alt=""></a></p></figure><!-- /imgDetail01 --></div><!-- /detailBox04 --></div></li></ul><div class="linkBasic02"><p><a href="/book/">静岡新聞社の本トップページ</a></p><!-- /linkBasic02 --></div><!-- /sectionBook --></section>			
+		<!-- /main --></div>
+		<div id="side">
+	<!-- /83555300/shizuoka/at_s/pc_rejya_right_1st -->
+<div id='pc_rejya_right_1st' class='sideBanner01'>
+<script>
+googletag.cmd.push(function() { googletag.display('pc_rejya_right_1st'); });
+</script>
+</div>
+	<script type="text/javascript" src="/ats-static/js/weather/weatherCommon.js"></script>
+<script type="text/javascript" src="/ats-static/js/weather/weatherDaily.js"></script>
+<div class="sideWeather01" id="sideWeatherAtsTop">
+<!-- /sideWeather01 --></div>
+<script type="text/javascript">weatherDailyAreaSelect("top", $('#sideWeatherAtsTop'));</script>
+	<!-- /83555300/shizuoka/at_s/pc_jisya_300x50 -->
+<div id='pc_jisya_300x50' class='sideBanner01'>
+<script>
+googletag.cmd.push(function() { googletag.display('pc_jisya_300x50'); });
+</script>
+</div>
+<!-- /83555300/shizuoka/at_s/pc_jisya_300x50_2nd -->
+<div id='pc_jisya_300x50_2nd' class='sideBanner01'>
+<script>
+googletag.cmd.push(function() { googletag.display('pc_jisya_300x50_2nd'); });
+</script>
+</div>
+<!-- /83555300/shizuoka/at_s/pc_jisya_300x50_3rd -->
+<div id='pc_jisya_300x50_3rd' class='sideBanner01'>
+<script>
+googletag.cmd.push(function() { googletag.display('pc_jisya_300x50_3rd'); });
+</script>
+</div>
+<!-- /83555300/shizuoka/at_s/pc_jisya_47club -->
+<div id='pc_jisya_47club' class='sideBanner01'>
+  <script>
+    googletag.cmd.push(function() { googletag.display('pc_jisya_47club'); });
   </script>
-</body>
+</div>
+	<div class="sidePicup">
+	<div class="ttlBasic01">
+		<h2>ピックアップ</h2>
+	<!-- /ttlBasic01 --></div>
+	<!-- /83555300/shizuoka/at_s/pc_jisya_300x204_1st -->
+<div id='pc_jisya_300x204_1st' >
+<script>
+googletag.cmd.push(function() { googletag.display('pc_jisya_300x204_1st'); });
+</script>
+</div>
+	<!-- /83555300/shizuoka/at_s/pc_jisya_300x204_2nd -->
+<div id='pc_jisya_300x204_2nd' >
+<script>
+googletag.cmd.push(function() { googletag.display('pc_jisya_300x204_2nd'); });
+</script>
+</div>
+	<!-- /83555300/shizuoka/at_s/pc_jisya_300x204_3rd -->
+<div id='pc_jisya_300x204_3rd' >
+<script>
+googletag.cmd.push(function() { googletag.display('pc_jisya_300x204_3rd'); });
+</script>
+</div>
+	<!-- /83555300/shizuoka/at_s/pc_jisya_300x204_4th -->
+<div id='pc_jisya_300x204_4th' >
+<script>
+googletag.cmd.push(function() { googletag.display('pc_jisya_300x204_4th'); });
+</script>
+</div>
+	<!-- /83555300/shizuoka/at_s/pc_jisya_300x204_5th -->
+<div id='pc_jisya_300x204_5th' >
+<script>
+googletag.cmd.push(function() { googletag.display('pc_jisya_300x204_5th'); });
+</script>
+</div>
+<!-- /sidePicup --></div>
+<!-- /83555300/shizuoka/at_s/pc_rejya_right_2nd -->
+<div id='pc_rejya_right_2nd' class='sideBanner01'>
+<script>
+googletag.cmd.push(function() { googletag.display('pc_rejya_right_2nd'); });
+</script>
+</div>
+	<div class="sideBanner02">
+<p><a onclick="gtag('event', 'recruit_click', {'event_category': 'recruit_link','event_label': 'recruit_01'});" href='http://www.at-s.com/blogs/recruit/' target='_blank'><img src="/topimage/recruit300_80_01.png" width="300" height="80" alt="静新SBS採用情報"></a></p>
+</div>
+
+
+<div id='common_top_banner_1st' class="sideBanner02">
+    <script>
+      googletag.cmd.push(function() {
+        googletag.pubads().display('/83555300,8661778/shizuoka/at_s/common_top_banner_1st', [[1, 1], [300, 250], [300, 54], [300, 100], [300, 50], 'fluid', [300, 80], [300, 150]], 'common_top_banner_1st');
+      });
+    </script>
+</div>
+<div id='common_top_banner_2nd' class="sideBanner02">
+    <script>
+      googletag.cmd.push(function() {
+        googletag.pubads().display('/83555300,8661778/shizuoka/at_s/common_top_banner_2nd', [[300, 54], [300, 250], [300, 150], [1, 1], 'fluid', [300, 50], [300, 80], [300, 100]], 'common_top_banner_2nd');
+      });
+    </script>
+</div>
+
+<div id='common_top_banner_3rd' class="sideBanner02">
+    <script>
+      googletag.cmd.push(function() {
+        googletag.pubads().display('/83555300,8661778/shizuoka/at_s/common_top_banner_3rd', ['fluid', [300, 54], [300, 100], [300, 50], [1, 1], [300, 250], [300, 80], [300, 150]], 'common_top_banner_3rd');
+      });
+    </script>
+</div>
+<!-- <div id='common_top_banner_4th' class="sideBanner02">
+    <script>
+      googletag.cmd.push(function() {
+        googletag.pubads().display('/83555300,8661778/shizuoka/at_s/common_top_banner_4th', [[300, 100], [300, 150], [1, 1], [300, 50], 'fluid', [300, 54], [300, 80], [300, 250]], 'common_top_banner_4th');
+      });
+    </script>
+</div> -->
+<div id='common_top_banner_5th' class="sideBanner02">
+    <script>
+      googletag.cmd.push(function() {
+        googletag.pubads().display('/83555300,8661778/shizuoka/at_s/common_top_banner_5th', [[300, 50], [300, 100], [300, 150], [300, 80], 'fluid', [300, 250], [300, 54], [1, 1]], 'common_top_banner_5th');
+      });
+    </script>
+</div>
+<div id='common_top_banner_6th' class="sideBanner02">
+    <script>
+      googletag.cmd.push(function() {
+        googletag.pubads().display('/83555300,8661778/shizuoka/at_s/common_top_banner_6th', [[300, 54], 'fluid', [300, 250], [300, 150], [1, 1], [300, 50], [300, 80], [300, 100]], 'common_top_banner_6th');
+      });
+    </script>
+</div>
+<div id='common_top_banner_7th' class="sideBanner02">
+    <script>
+      googletag.cmd.push(function() {
+        googletag.pubads().display('/83555300,8661778/shizuoka/at_s/common_top_banner_7th', [[300, 80], 'fluid', [1, 1], [300, 150], [300, 100], [300, 50], [300, 54], [300, 250]], 'common_top_banner_7th');
+      });
+    </script>
+</div>
+
+<div class="sideBanner02">
+<p><a onclick="gtag('event', 'backnumber_click', {'event_category': 'backnumber_link','event_label': 'backnumber_atstop_side'});" href='https://www.at-s.com/apps/shop/backno_daily' target='_blank'><img src="/topimage/backnumber_300_54.png" width="300" height="50" alt="静岡新聞バックナンバー販売"></a></p>
+</div>
+
+<div class="sideBanner02">
+<p><a onclick="gtag('event', 'buddybox_click', {'event_category': 'buddybox_link','event_label': 'buddybox_atstop_side'});"  href='https://www.at-s.com/apps/shop/teambuddy' target='_blank'><img src="/topimage/buddybox300×50_1.jpg" width="300" height="50" alt="BuddyBox"></a></p>
+</div>
+
+<div id='common_top_banner_8th' class="sideBanner02">
+    <script>
+      googletag.cmd.push(function() {
+        googletag.pubads().display('/83555300,8661778/shizuoka/at_s/common_top_banner_8th', [[300, 50], [300, 54], [1, 1], [300, 250], 'fluid', [300, 100], [300, 80], [300, 150]], 'common_top_banner_8th');
+      });
+    </script>
+</div>
+<div id='common_top_banner_9th' class="sideBanner02">
+    <script>
+      googletag.cmd.push(function() {
+        googletag.pubads().display('/83555300,8661778/shizuoka/at_s/common_top_banner_9th', [[300, 50], [300, 150], [300, 54], 'fluid', [300, 250], [300, 80], [1, 1], [300, 100]], 'common_top_banner_9th');
+      });
+    </script>
+  </div>
+<div id='common_top_banner_10th' class="sideBanner02">
+    <script>
+      googletag.cmd.push(function() {
+        googletag.pubads().display('/83555300,8661778/shizuoka/at_s/common_top_banner_10th', [[300, 54], 'fluid', [300, 250], [300, 150], [1, 1], [300, 50], [300, 80], [300, 100]], 'common_top_banner_10th');
+      });
+    </script>
+</div>	<!-- instagram -->
+<div class="instagram">
+	<div class="instagram-header">
+		<div class="instagram-headline"></div>
+		<div class="instagram-headerbox">
+			<div class="instagram-logo01"><img src="/ats-static/img/common/logo_insta.png" alt="instagram"></div>
+			<div class="instagram-name">shizushin_ats</div>
+			<div class="instagram-logo02"><img src="/ats-static/img/common/logo_insta_l.svg" alt="instagram"></div>
+		</div>
+	</div>
+	<div class="instagram-listbox">
+		<ul class="instagram-list">
+<li class="instagram-item"><figure><a href="https://www.instagram.com/p/Cq3_115PQ-1/" target="_blank" rel="noopener noreferrer"><div class="instagram-pic"><img src="https://scontent-itm1-1.cdninstagram.com/v/t39.30808-6/339674660_155317447170298_5548044712685800914_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=8ae9d6&_nc_ohc=UEZVdWEFq3wAX86Nrv4&_nc_ht=scontent-itm1-1.cdninstagram.com&edm=ANo9K5cEAAAA&oh=00_AfCEYiAU0T3OjhjUsQ5CwdGRuOLJilG-laVb0EHKk__zNA&oe=643A9ACA" ></div><figcaption class="instagram-txt">🌿´-
+
+最高級国産小麦を使用した自家製生食パンと
+スペシャルティーコーヒー豆を使用した
+自家焙煎コーヒーのテイクアウト専門店☕♡
+
+耳まで美味しく食べられる自家製生食パンを
+こんがりトーストしたサンドイッチや
+スイーツがいただけます🍞
+
+スペシャルティーコーヒー豆を使用した
+自家焙煎コーヒー、季節の果物シロップを
+使用した冷たいドリンクなど
+多彩なメニューが揃っています♡
+週末の楽しみにほっこりカフェタイムをぜひ◎
+
+📍トーストカフェ Guug.（グーグ）[磐田市富士見町] 
+https://www.at-s.com/gourmet/article/takeout/bread/906170.html
+
+@guug.01
+
+𓈒𓂂𓂃◌𓈒𓐍𓈒𓂂𓂃◌𓈒𓐍𓈒𓂂𓂃◌𓈒𓐍𓈒𓂂𓂃◌𓈒𓐍
+
+静岡新聞社が運営する情報サイト
+アットエスの公式アカウントです✐౽
+
+県内のグルメやイベント情報を
+紹介しています*･ᴗ･`)੭⁾⁾
+
+⇰ @shizushin_ats
+
+𓈒𓂂𓂃◌𓈒𓐍𓈒𓂂𓂃◌𓈒𓐍𓈒𓂂𓂃◌𓈒𓐍𓈒𓂂𓂃◌𓈒𓐍
+#アットエス #アットエスグルメ
+#静岡グルメ #shizuoka
+#guug
+#トーストカフェ
+#パン好き #パンスタグラム
+#ぱんすたぐらむ
+#パンのある暮らし
+#パンのある生活
+#アットエスパン部</figcaption>
+</a>
+</figure></li><li class="instagram-item"><figure><a href="https://www.instagram.com/p/Cqy2QBkvESS/" target="_blank" rel="noopener noreferrer"><div class="instagram-pic"><img src="https://scontent-itm1-1.cdninstagram.com/v/t39.30808-6/340311301_177247055176938_2100488580167182863_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=8ae9d6&_nc_ohc=9hjo3TffRMgAX837oHf&_nc_ht=scontent-itm1-1.cdninstagram.com&edm=ANo9K5cEAAAA&oh=00_AfANHyHF0WxgZVSWlYiZU92oFZ7j68541JkzZ7__T3NwGA&oe=6438CDF8" ></div><figcaption class="instagram-txt">🌿´-
+クセがないからクセになる😋
+毎日食べても飽きない「あこ酵母」パン🍞
+
+2023年2月2日
+浜松・引佐町にパン工房を備えた
+自家製酵母パンのカフェがOPEN✨
+
+小麦粉と米を使い酵母菌と麹菌を培養して作る
+天然酵母「あこ酵母」で作ったパンは
+毎日食べても飽きないおいしさ🤗
+
+メニューは、「ぱんプラスプレート」や
+「パンとお飲み物」などを提供しています。
+
+テイクアウトはも約10種類ほど用意されているとの事です。
+ぜひ味わってみては💕
+
+※パン作り教室についてはお問い合わせください
+
+📍パンと喫茶 ぱんプラス［浜松市北区引佐町横尾］
+https://www.at-s.com/gourmet/article/takeout/bread/1212185.html
+
+@panplusc
+
+𓈒𓂂𓂃◌𓈒𓐍𓈒𓂂𓂃◌𓈒𓐍𓈒𓂂𓂃◌𓈒𓐍𓈒𓂂𓂃◌𓈒𓐍
+
+静岡新聞社が運営する情報サイト
+アットエスの公式アカウントです✐౽
+
+県内のグルメやイベント情報を
+紹介しています*･ᴗ･`)੭⁾⁾
+
+⇰ @shizushin_ats
+
+𓈒𓂂𓂃◌𓈒𓐍𓈒𓂂𓂃◌𓈒𓐍𓈒𓂂𓂃◌𓈒𓐍𓈒𓂂𓂃◌𓈒𓐍
+#アットエス #アットエスグルメ
+#静岡グルメ #shizuoka
+#ぱんプラス 
+#パンと喫茶ぱんプラス
+#浜松パン教室 
+#浜松カフェ 
+#引佐カフェ#あこ酵母
+#パン好き #パンスタグラム
+#ぱんすたぐらむ
+#パンのある暮らし
+#パンのある生活
+#アットエスパン部
+#静岡パン #静岡パン屋
+#静岡パン部 #パン屋巡り</figcaption>
+</a>
+</figure></li><li class="instagram-item"><figure><a href="https://www.instagram.com/p/CqtsqOxPwmP/" target="_blank" rel="noopener noreferrer"><div class="instagram-pic"><img src="https://scontent-itm1-1.cdninstagram.com/v/t39.30808-6/339639384_2827734944030371_31138388006427379_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=8ae9d6&_nc_ohc=o7VIwiWgoQEAX9hSgv1&_nc_ht=scontent-itm1-1.cdninstagram.com&edm=ANo9K5cEAAAA&oh=00_AfC-ihBcUnwqIF9xzY3YMkq1KOkFkWy_TH3WKZzxADeuTw&oe=643A2D34" ></div><figcaption class="instagram-txt">📖´-
+和食店が営むパンケーキ専門店🥞
+
+県内産の抹茶や果物などと組み合わせた定番8種類と、季節で替わる限定メニュー1種類を提供✨
+
+特殊な小麦粉や製法を用い、柔らかな食感が特徴の「こびとぱん」も提供中❗
+
+緑に囲まれたカフェで癒しのひとときを😌🐦
+
+📍 パンケーキ専門店 cafe nasube（ナスベー）［静岡市清水区］
+https://www.at-s.com/gourmet/article/cafe/cafe/829493.html
+
+@cafe.nasube.pancake 
+ 
+⌒*⌒*⌒*⌒*⌒*⌒*⌒*⌒*⌒*⌒*
+
+静岡新聞社が運営する情報サイト
+アットエスの公式アカウントです🌼
+
+県内のグルメやイベント情報を
+紹介しています*ଘ(੭*ˊᵕˋ)੭*
+
+@shizushin_ats
+
+⌒*⌒*⌒*⌒*⌒*⌒*⌒*⌒*⌒*⌒*
+#静岡カフェ巡り #静岡カフェ部
+#カフェスタグラム #静岡カフェ
+#カフェ好き #カフェ活
+#スイーツグラム #甘党女子
+#パティシエカメラ部
+#アットエススイーツ部</figcaption>
+</a>
+</figure></li></ul>
+	</div>
+</div><!-- /instagram -->
+	<!-- /83555300/shizuoka/at_s/pc_rejya_right_3rd -->
+<div id='pc_rejya_right_3rd' class='sideBanner01'>
+<script>
+googletag.cmd.push(function() { googletag.display('pc_rejya_right_3rd'); });
+</script>
+</div>
+<!-- /side --></div>
+	<!-- /contents --></article>
+<!-- /wrapper --></div>
+<footer id="footer">
+	<div id="footerIn01">
+		<div id="footerlinkIn">
+			<span class="pageTop01"><a href="#header">ページトップ</a></span>
+			<span class="pageTop02" style="bottom: -100px;"><a href="#header"></a></span>
+			
+			<div class="footerLinks03">
+				<div class="footerLinks03__inner">
+					<dl class="middleList">
+						<dt>静岡新聞</dt>
+						<dd>
+							<ul>
+								<li><a href="https://www.at-s.com/news/" target="_blank">あなたの静岡新聞</a></li>
+							</ul>
+						</dd>
+					</dl>
+					<dl class="middleList">
+						<dt>SBS TV・RADIO</dt>
+						<dd class="type01 clearfix">
+							<dl class="middleSubList">
+								<dt><a href="https://www.at-s.com/sbstv/">SBS TV</a></dt>
+								<dd>
+									<ul class="listStyle01">
+										<li><a href="https://www.at-s.com/sbstv/timetable/">番組表</a></li>
+										<li><a href="https://www.at-s.com/sbstv/ana_list/">アナウンサー</a></li>
+										<li><a href="https://www.at-s.com/sbstv/bangumi_kijun/index.html">番組放送基準</a></li>
+										<li><a href="https://www.at-s.com/sbstv/data/info.html">視聴データの取扱について</a></li>
+										<li><a href="https://www.at-s.com/sbstv/kokuminhogo/index.html">国民保護に関する業務計画</a></li>
+									</ul>
+								</dd>
+							</dl>
+							<dl class="middleSubList">
+								<dt><a href="https://www.at-s.com/sbsradio/">SBS RADIO</a></dt>
+								<dd>
+									<ul class="listStyle01">
+										<li><a href="https://www.at-s.com/sbsradio/timetable/">番組表</a></li>
+										<li><a href="https://www.at-s.com/sbsradio/per_list/">パーソナリティー</a></li>
+									</ul>
+								</dd>
+							</dl>
+							<dl class="middleSubList">
+								<dt><a href="https://newsdig.tbs.co.jp/list/sbs">SBS NEWS</a></dt>
+								<dd></dd>
+							</dl>
+						</dd>
+					</dl>
+					<dl class="middleList">
+						<dt>動画</dt>
+						<dd>
+							<ul>
+								<li><a href="https://www.at-s.com/dogas/" target="_blank">DoGAS</a></li>
+							</ul>
+						</dd>
+					</dl>
+				</div>
+				
+				<div class="footerLinks03__inner">
+					<dl class="middleList">
+						<dt>静岡で楽しむ</dt>
+						<dd>
+							<ul class="middleSubList">
+								<li><a href="https://www.at-s.com/event/">イベント</a></li>
+								<li><a href="https://www.at-s.com/gourmet/">グルメ</a></li>
+                                <li><a href="https://www.at-s.com/life/">ライフ</a></li>
+							</ul>
+							<ul class="middleSubList">
+								<li><a href="https://www.at-s.com/facilities/">観光</a></li>
+								<li><a href="http://www.at-s.com/coupon/">クーポン</a></li>
+								<li><a href="https://www.at-s.com/present/">プレゼント</a></li>
+							</ul>
+						</dd>
+					</dl>
+					<dl class="middleList">
+						<dt>静岡で学ぶ</dt>
+						<dd>
+							<ul>
+								<li><a href="http://www.at-s.com/blogs/nie/index.html" target="_blank">NIE</a></li>
+							</ul>
+						</dd>
+					</dl>
+					<dl class="middleList">
+						<dt>静岡で働く</dt>
+						<dd>
+							<ul>
+								<li><a href="http://shigoto.at-s.com/" target="_blank">しごとのかんづめ</a></li>
+								<li><a href="http://www.at-s.com/future/" target="_blank">Futureしずおか</a></li>
+							</ul>
+						</dd>
+					</dl>
+				</div>
+				
+				<div class="footerLinks03__inner">
+					<dl class="middleList">
+						<dt>社内事業・イベント・サービス</dt>
+						<dd>
+							<ul>
+								<li><a href="https://www.at-s.com/event/search/?genre=19">主催事業・CSR</a></li>
+								<li><a href="http://www.at-s.com/info/support.html">後援申請</a></li>
+							</ul>
+						</dd>
+					</dl>
+					<dl class="middleList">
+						<dt>ショッピング</dt>
+						<dd>
+							<ul>
+								<li><a href="https://www.at-s.com/apps/shop/teambuddy" target="_blank">静岡新聞SBSショッピング</a></li>
+								<li><a href="https://www.47club.jp/goods/search?keyword=&amp;font_size=ShopB&amp;search.x=true&amp;x=31&amp;y=22&amp;pref=%E9%9D%99%E5%B2%A1%E7%9C%8C&amp;search_type=0" target="_blank">しずしん47（静岡新聞47CLUB）</a></li>
+							</ul>
+						</dd>
+					</dl>
+				</div>
+			</div>
+		</div>
+	<!-- /footerIn01 --></div>
+	
+	<div id="footerIn02">
+		<div class="footerLinks04">
+			<dl class="smallList">
+				<dt><a href="https://shizushinsbs.co.jp/" target="_blank">企業情報</a></dt>
+				<dd>
+					<ul>
+						<li><a href="http://www.at-s.com/blogs/recruit/" target="_blank">採用情報</a></li>
+						<li><a href="https://shizushinsbs.co.jp/group/" target="_blank">グループ会社・関連団体</a></li>
+						<li><a href="https://www.at-s.com/saigai/" target="_blank">静岡新聞SBS災害情報</a></li>
+						<li><a href="https://www.at-s.com/info/kengaku/" target="_blank">新聞・テレビ・ラジオ見学</a></li>
+						<li><a href="https://shizushinsbs.co.jp/news/" target="_blank">プレスリリース</a></li>
+						<li><a href="https://www.at-s.com/info/sdgs/" target="_blank">SDGsへの取り組み</a></li>
+					</ul>
+				</dd>
+			</dl>
+			<dl class="smallList">
+				<dt>静岡新聞SBSへの情報提供</dt>
+				<dd>
+					<ul>
+						<li><a href="http://www.at-s.com/info/traffic.html">静岡新聞SBSに投稿</a></li>
+						<li><a href="http://www.at-s.com/info/weeklyguide.html">ウィークリーガイド掲載申し込み</a></li>
+					</ul>
+				</dd>
+			</dl>
+			<dl class="smallList">
+				<dt>購読・サービスのご案内</dt>
+				<dd>
+					<ul>
+						<li><a href="http://www.at-s.com/info/koudoku/index.html">新聞購読・試読</a></li>
+						<li><a href="https://www.at-s.com/apps/shop/backno_daily">バックナンバー</a></li>
+						<li><a href="http://www.at-s.com/book/">静岡新聞の本</a></li>
+						<li><a href="http://www.at-s.com/mobile/index.html" target="_blank">＠S［アットエス］ストア</a></li>
+					</ul>
+				</dd>
+			</dl>
+			<dl class="smallList">
+				<dt>法人のお客様へ</dt>
+				<dd>
+					<ul>
+						<li><a href="https://shizushin.jp/" target="_blank">静岡新聞データベース</a></li>
+					</ul>
+				</dd>
+			</dl>
+		</div>
+		
+		<div class="footer__copyrightLinks">
+			<ul>
+				<li><a href="http://www.at-s.com/info/about.html">サイトポリシー</a></li>
+				<li><a href="http://www.at-s.com/info/copyright.html">著作権</a></li>
+				<li><a href="http://www.at-s.com/info/adv/index.html">広告掲載・メディア資料</a></li>
+				<li><a href="https://www.at-s.com/apps/entryform/entry/form/146337" target="_blank">お問い合わせ・ヘルプ</a></li>
+				<li><a href="http://www.at-s.com/sitemap.html">サイトマップ</a></li>
+			</ul>
+			<p>Copyright The Shizuoka Shimbun and Shizuoka Broadcasting System., All rights reserved.</p>
+			<p>静岡県内の情報が満載！アットエスは静岡新聞社・静岡放送が運営する公式サイトです。</p>
+		</div>
+	<!-- /footerIn02 --></div>
+</footer></body>
 </html>
