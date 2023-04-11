@@ -1,0 +1,140 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+        margin: 0;
+        padding: 0;
+      }
+      .news-list {
+        width: 100%;
+        max-width: 960px;
+        margin: 0 auto;
+      }
+      .news-item {
+        display: flex;
+        align-items: center;
+        padding: .5rem;
+        border-bottom: 1px solid #ddd;
+      }
+      .news-link{
+        color: #333;
+        text-decoration: none;
+      }
+      .news-link p{
+        color: #999;
+        font-size: .9rem;
+      }
+      .news-image {
+        flex: 0 0 auto;
+        margin-right: 1rem;
+      }
+      .news-image img {
+        width: 100px;
+        height: 100px;
+      }
+      .news-content {
+        flex: 1 1 auto;
+      }
+      .news-content h2 {
+        margin-bottom: 10px;
+        font-size: 16px;
+      }
+      .news-content p {
+        margin-bottom: 0;
+      }
+    </style>
+</head>
+<body>
+  <div id="article-list"></div>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      var rssUrl = "https://www.at-s.com/rss/ats-plus/news_top.rss"; // RSSのURLを指定する
+      var numArticles = 500; // 表示する記事の数を指定する
+      
+      // RSSを読み込む
+      $.ajax({
+        url: rssUrl,
+        dataType: "xml",
+        success: function(data) {
+          var articles = [];
+          $(data).find("item").each(function(i, item) {
+            if (i < numArticles) {
+              var $item = $(item);
+              var description = $item.find("description").text();
+              var regex = /<img\s+src="([^"]+)"/;
+              var match = description.match(regex);
+              var thumbnail = "https://www.at-s.com/ats-tool/ats-plus/thumb/crop/1/width/200/height/200/yappli/1/file/ats-static/img/ats-plus/news/noimage.jpg";
+              if (match) {
+                  thumbnail = match[1];
+              } 
+              regex = /(\d{4}\.\d{2}\.\d{2}\s+\d{2}:\d{2})/;
+              match = description.match(regex);
+              var pubDate = "";
+              if (match) {
+                  pubDate = match[1];
+              }
+              var article = {
+                title: $item.find("title").text(),
+                link: "https://www.at-s.com",  //$item.find("link").text(),
+                pubDate: pubDate,
+                description:pubDate,
+                thumbnail: thumbnail
+              };
+              articles.push(article);
+            }
+          });
+          
+          // 記事一覧を生成する
+          var $articleList = $('<ul>');
+          
+          $.each(articles, function(i, article) {
+
+            var item = "";
+            item += '<div class="news-item">';
+            item += '<a href="' + article.link + '" class="news-link" target="_blank">';
+            item += '<div class="news-image">';
+            item += '<img src="' + article.thumbnail + '" loading="lazy">';
+            item += '</div>';
+            item += '<div class="news-content">';
+            item += '<h2>' + article.title + '</h2>';
+            item += '<p>' + article.description + '</p>';
+            item += '</a>'
+            item += '</div>';
+
+            $articleList.append($(item));
+                       
+          });
+          
+          // 記事一覧をページに表示する
+          $('#article-list').append($articleList);
+          
+          /*
+          $('.news-link').click(function(e) {
+            e.preventDefault();
+            var link = "https://www.at-s.com";   //$(this).attr("href");
+            history.pushState(null, null, link);
+          });
+          */
+        
+        },
+        error: function() {
+          // RSSの読み込みに失敗した場合にエラーメッセージを表示する
+          var $errorMessage = $('<p>').text('Failed to load RSS feed');
+          $('#article-list').append($errorMessage);
+        }
+        
+        
+      });
+      
+
+      
+    });
+  </script>
+</body>
+</html>
